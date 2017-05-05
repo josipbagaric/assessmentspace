@@ -1,0 +1,25 @@
+{% with request.resolver_match.url_name as url %}
+<li class="nav-item">
+    <a class="nav-link {% if url == 'dashboard' %}active{% endif %}" href="{% url 'interviews:dashboard' %}">
+        <i class="icon ion-speedometer"></i>
+        Dashboard
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'assessment' in url %}active{% endif %}" href="{% url 'interviews:assessments' %}">
+        <i class="icon ion-edit"></i>
+        Assessments
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'settings' in url %}active{% endif %}" href="/app/settings/">
+        <i class="icon ion-gear-a"></i>
+        Settings
+    </a>
+</li>
+<li class="nav-item hidden-sm-up">
+    <a class="nav-link" href="/logout/">
+        Log out
+    </a>
+</li>
+{% endwith %}

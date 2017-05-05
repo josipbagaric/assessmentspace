@@ -1,0 +1,167 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+{% load django_markdown %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item active">{{ assessment.name }}</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<div class="row vertical-center">
+    <div class="col-md-4">
+        <h1>
+            {{ assessment.name }}
+        </h1>
+    </div>
+    <div class="col-md-8">
+        <div class="float-md-right">
+            <h4>{{ assessment.start_date|date:"N j" }} - {{ assessment.end_date }}, {{ assessment.office }}, {{ assessment.office.country }}</h4>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row vertical-center">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-2">
+                <h5>Status:</h5>
+            </div>
+            <div class="col-md-10">
+                <h5>
+                {% if status == 'Not started yet' %}
+                    <span class="badge badge-danger">{{ status }}</span>
+                {% elif status == 'In progress' %}
+                    <span class="badge badge-warning">{{ status }}</span>
+                {% elif status == 'Complete' %}
+                    <span class="badge badge-success">{{ status }}</span>
+                {% endif %}
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="float-md-right">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a class="btn btn-secondary" href="{% url 'interviews:edit_assessment' assessment.pk %}">
+                    <i class="icon ion-edit"></i>
+                    Edit assessment
+                </a>
+                <a class="btn btn-secondary" href="{% url 'interviews:logs_assessment' assessment.pk %}">
+                    <i class="icon ion-android-list"></i>
+                    Event Log
+                </a>
+            </div>
+            <a class="btn btn-success" href="{% url 'interviews:results_assessment' assessment.pk %}">
+                <i class="icon ion-eye"></i>
+                Results
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if assessment.description %}
+<hr>
+<div>{{ assessment.description|markdown }}</div>
+{% endif %}
+
+<hr>
+    
+<div class="row">
+    <div class="col-md-12">
+        Candidates: 
+        <span class="badge badge-default">
+            {{ candidates|length }}
+        </span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        Interviews
+        <ul>
+            {% for interview_type in interview_types %}
+            <li>{{ interview_type }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+
+{% if progress != 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>Assessment progress</p>
+            <div class="progress">
+                {% for progress in progress_per_day %}
+                    {% if progress.date == today and progress.value < 100 %}
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" aria-valuenow="{{ progress.value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress.value }}%">Day {{ forloop.counter }} - {{ progress.value }}%</div>
+                    {% elif progress.date == today and progress.value == 100 %}
+                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="{{ progress.value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress.value }}%">Day {{ forloop.counter }} - {{ progress.value }}%</div>
+                    {% elif progress.date < today and progress.value == 100 %}
+                        <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="{{ progress.value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress.value }}%">Day {{ forloop.counter }} - {{ progress.value }}%</div>
+                    {% elif progress.date < today and progress.value < 100 %}
+                        <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="{{ progress.value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress.value }}%">Day {{ forloop.counter }} - {{ progress.value }}%</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<hr>
+
+{% for day in schedule.days.all %}
+    <div class="schedule-wrapper-assessment">
+        <h4>
+            {{ day.date }}
+            <a class="btn btn-secondary btn-sm" href="{% url 'interviews:edit_schedule' day.pk %}">
+                <i class="icon ion-edit"></i>
+            </a>
+        </h4>
+        {% if day.timeslots.all %}
+        <table class="table table-bordered table-responsive table-hover">
+            <thead>
+                <tr class="bg-primary text-white">
+                    <th>Timeslot</th>
+                    {% for candidate in day.candidates.all %}
+                    <th>{{ candidate.user.username }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for timeslot in day.timeslots.all %}
+                <tr>
+                    <td>{{ timeslot.start_time|time:"H:i" }} - {{ timeslot.end_time|time:"H:i" }}</td>
+                    {% for interview in timeslot.interviews.all %}
+                    <td>
+                        <a href="{% url 'interviews:assessment_interview' interview.pk %}">
+                            {{ interview.interview_type.name }}
+                        </a>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            No schedule yet.
+        {% endif %}
+    </div>
+{% endfor %}
+
+{% endblock %}

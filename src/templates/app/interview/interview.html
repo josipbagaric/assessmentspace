@@ -1,0 +1,193 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    {% if assessment %}
+        <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' interview.timeslot.assessment_day.schedule.assessment.pk %}">{{ interview.timeslot.assessment_day.schedule.assessment.name }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item active">
+        {% if assessment %}
+            {{ interview.interview_type.name }} - {{ interview.candidate }}
+        {% else %}
+            {{ interview.name }}
+        {% endif %}
+    </li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if finished %}
+<div class="alert alert-success">Interview finished successfully.</div>
+{% endif %}
+
+{% if unauthorized %}
+<div class="alert alert-danger">This action is not permitted.</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>
+            Interview information
+            {% if not completed %}
+            <a class="btn btn-secondary" href="{% if assessment %}{% url 'interviews:schedule_edit_interview' interview.pk %}{% else %}{% url 'interviews:edit_interview' interview.pk %}{% endif %}">
+                <i class="icon ion-edit"></i>
+            </a>
+            {% endif %}
+        </h1>
+    </div>
+</div>
+<hr>
+
+<div class="row">
+    <div class="col-md-2 col-xs-6">
+        Candidate:
+    </div>
+    <div class="col-md-10 col-xs-6">
+        {{ interview.candidate.full_name }}
+    </div>
+</div>
+
+{% if assessment %}
+    <div class="row">
+        <div class="col-md-2 col-xs-6">
+            Type:
+        </div>
+        <div class="col-md-10 col-xs-6">
+            {{ assessment_interview.interview_type }}
+        </div>
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-2 col-xs-6">
+        Start time:
+    </div>
+    <div class="col-md-10 col-xs-6">
+        {% if assessment %}
+            {{ interview.timeslot.assessment_day.date }},
+            {{ interview.timeslot.start_time }}
+        {% else %}
+            {{ interview.start_time }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2 col-xs-6">
+        Duration:
+    </div>
+    <div class="col-md-10 col-xs-6">
+        {{ interview.duration }}
+    </div>
+</div>
+
+{% if assessment %}
+    <div class="row">
+        <div class="col-md-2 col-xs-6">
+            Location:
+        </div>
+        <div class="col-md-10 col-xs-6">
+            {{ interview.room }}
+        </div>
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-2 col-xs-6">
+        Status:
+    </div>
+    <div class="col-md-10 col-xs-6">
+        {% if status == 'Not started yet' %}
+            <span class="text-danger">{{ status }}</span>
+        {% elif status == 'In progress' %}
+            <span class="text-warning">{{ status }}</span>
+        {% else %}
+            <span class="text-success">{{ status }}</span>
+        {% endif %}
+    </div>
+</div>
+
+{% if assessment %}
+    {% if interview.interview_type.description %}
+        <hr>
+        <div class="row">
+            <div class="col-md-2 col-xs-6">
+                Description:
+            </div>
+            <div class="col-md-10 col-xs-6">
+                {{ interview.interview_type.description }}
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    {% if interview.description %}
+        <hr>
+        <div class="row">
+            <div class="col-md-2 col-xs-6">
+                Description:
+            </div>
+            <div class="col-md-10 col-xs-6">
+                {{ interview.description }}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+
+{% if assessment %}
+    {% if interview.note %}
+        <hr>
+        <div class="row">
+            <div class="col-md-2 col-xs-6">
+                Note:
+            </div>
+            <div class="col-md-10 col-xs-6">
+                {{ assessment_interview.note }}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+
+<hr>
+
+{% if not completed and status != 'Finished'%}
+    <div class="row">
+        <div class="col-md-12 horizontal-center">
+            <a class="btn btn-primary btn-lg {% if not can_start %}disabled{% endif %}" href="{% if assessment %}{% url 'interviews:start_assessment_interview' interview.pk %}{% else %}{% url 'interviews:start_interview' interview.pk %}{% endif %}">
+                Start interview
+            </a>
+        </div>
+    </div>
+{% elif results %}
+    <h4>Results</h4>
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr class="bg-primary text-white">
+                <th>Competency</th>
+                <th>Score</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    <td>{{ result.competency }}</td>
+                    <td>{{ result.score }}</td>
+                    <td>{{ result.note }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% endblock %}

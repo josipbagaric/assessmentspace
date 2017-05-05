@@ -1,0 +1,210 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+<div class="row vertical-center">
+    <div class="col-md-6">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">
+                <div class="circle bg-primary float-md-left">
+                    <i class="icon ion-speedometer"></i>
+                </div>
+                <span>&nbsp;&nbsp;Dashboard</span>
+            </li>
+        </ol>
+    </div>
+    <div class="col-md-6">
+        <div class="float-md-right">
+            <a class="btn btn-outline-primary" href="/support/">
+                <i class="icon ion-help"></i>
+                Support
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if changed %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+
+{% if deleted %}
+<div class="alert alert-success">Interview deleted successfully.</div>
+{% endif %}
+
+<div class="row vertical-align">
+    <div class="col-md-4">
+        <div id="newDropdown" class="dropdown vertical-center">
+            <button class="btn btn-primary dropdown-toggle" id="newDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+            New
+            </button>
+
+            <div class="dropdown-menu" aria-labelledby="newDropdownButton">
+            {% if offices %}
+                <a class="dropdown-item" href="{% url 'interviews:new_interview' %}">Interview</a>
+                <a class="dropdown-item" href="{% url 'interviews:new_assessment' %}">Assessment Center</a>
+            {% else %}
+                <a class="dropdown-item" href="{% url 'interviews:new_office' %}?next=/app/interview/new/">Interview</a>
+                <a class="dropdown-item" href="{% url 'interviews:new_office' %}?next=/app/assessments/new/">Assessment Center</a>
+            {% endif %}
+            </div>
+
+            {% if interviews|length == 0 and assessment_interviews|length == 0 and assessments|length == 0 %}
+            <span class="start-here-indicator pulsate">
+                <i class="icon ion-arrow-left-c"></i>
+                Start here
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div class="col-md-4">
+        <h1>Agenda</h1>
+    </div>
+    <div class="col-md-4">
+        <div class="float-md-right">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search..." disabled>
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button" disabled>
+                        <i class="icon ion-search"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+
+    <div class="col-md-{% if assessments %}9{% else %}12{% endif %}">
+        <div id='calendar'></div>
+    </div>
+
+    {% if assessments %}
+        <div class="col-md-3">
+            <h4>
+                My assessments 
+                <span class="badge badge-default">{{ assessments|length }}</span>
+            </h4>
+            <hr>
+            <div class="list-group">
+                {% for assessment in assessments %}
+                    <a href="{% url 'interviews:assessment' assessment.pk %}" class="list-group-item list-group-item-action">
+                        {{ assessment.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+
+    $(document).ready(function() {
+
+        $(window).click(function(){
+            if ($("#newDropdown").hasClass("show")) {
+                $("#newDropdown").removeClass("show");
+            }
+        });
+
+        $("#newDropdownButton").click(function(event){
+            event.stopPropagation();
+            $("#newDropdown").toggleClass("show");
+        });
+
+        
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'agendaDay,agendaWeek,month,listWeek'
+            },
+            defaultDate: '{{ todays_date }}',
+            defaultView: '{{ agenda_view }}',
+            navLinks: true, // can click day/week names to navigate views
+            editable: false,
+            eventLimit: true, // allow "more" link when too many events
+            events: [
+                {% for interview in interviews %}
+                {
+                    title: '{{ interview.name }}\n{{ interview.candidate.full_name }}',
+                    start: '{{ interview.start_time }}',
+                    end: '{{ interview.end_time }}',
+                    url: '{% url "interviews:interview" interview.pk %}',
+                },
+                {% endfor %}
+
+                {% for a_interview in assessment_interviews %}
+                {
+                    title: '{{ a_interview.candidate.full_name }}\n{{ a_interview.interview_type }}\n{{ a_interview.timeslot.assessment_day.schedule.assessment }}',
+                    start: '{{ a_interview.start_time }}',
+                    end: '{{ a_interview.end_time }}',
+                    url: '{% url "interviews:assessment_interview" a_interview.pk %}',
+                    color: '#0275d8',
+                },
+                {% endfor %}
+            ]
+        });
+        
+        // Prev button
+        $('button.fc-prev-button.fc-button.fc-state-default.fc-corner-left').each(function() {
+            $(this).removeClass('fc-prev-button fc-button fc-state-default fc-corner-left');
+            $(this).addClass('btn btn-secondary');
+        });
+
+        // Next button
+        $('button.fc-next-button.fc-button.fc-state-default.fc-corner-right').each(function() {
+            $(this).removeClass('fc-next-button fc-button fc-state-default fc-corner-right');
+            $(this).addClass('btn btn-secondary');
+        });
+
+        // Today button
+        $('button.fc-today-button.fc-button.fc-state-default.fc-corner-left.fc-corner-right.fc-state-disabled').each(function() {
+            $(this).removeClass('fc-today-button fc-button fc-state-default fc-corner-left fc-corner-right fc-state-disabled');
+            $(this).addClass('btn btn-secondary');
+            $(this).prop("disabled", false);
+            $(this).html('Today');
+        });
+
+        // List button
+        $('button.fc-listWeek-button.fc-button.fc-state-default.fc-corner-right').each(function() {
+            $(this).removeClass('fc-listWeek-button fc-button fc-state-default fc-corner-right');
+            $(this).addClass('btn btn-secondary');
+            $(this).html('&nbsp;&nbsp;<i class="icon ion-grid"></i>&nbsp;&nbsp;')
+        });
+
+        // Day button
+        $('button.fc-agendaDay-button.fc-button.fc-state-default').each(function() {
+            $(this).removeClass('fc-agendaDay-button fc-button fc-state-default');
+            $(this).addClass('btn btn-secondary');
+            $(this).html('Day');
+        });
+
+        // Week button
+        $('button.fc-agendaWeek-button.fc-button.fc-state-default').each(function() {
+            $(this).removeClass('fc-agendaWeek-button fc-button fc-state-default fc-state-active ');
+            $(this).addClass('btn btn-secondary');
+            $(this).html('Week');
+        });
+
+        // Month button
+        $('button.fc-month-button.fc-button.fc-state-default').each(function() {
+            $(this).removeClass('fc-month-button fc-button fc-state-default');
+            $(this).addClass('btn btn-secondary');
+            $(this).html('Month');
+        });
+
+    });
+
+</script>
+{% endblock javascript %}

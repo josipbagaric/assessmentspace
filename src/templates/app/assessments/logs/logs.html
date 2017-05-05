@@ -1,0 +1,59 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment.pk %}">{{ assessment.name }}</a></li>
+    <li class="breadcrumb-item active">Logs</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<h1>{{ assessment.name }} - Logs</h1>
+
+<table class="table table-sm table-hovered">
+    <thead class="thead-default">
+        <tr>
+            <th>Time</th>
+            <th>Date</th>
+            <th>ID</th>
+            <th>Event</th>
+            <th>By</th>
+            <th>Interview</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.created|time:"H:i" }}</td>
+            <td>{{ log.created|date:"d M Y" }}</td>
+            <th scope="row">{{ log.short_id }}</th>
+            <td>{{ log.action }}</td>
+            <td>{{ log.by }}</td>
+            <td>
+                <a href="{% url 'interviews:assessment_interview' a_interview.pk %}">
+                    {{ log.interview }}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">
+                No events yet.
+            </td>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

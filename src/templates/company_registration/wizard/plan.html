@@ -1,0 +1,78 @@
+{% extends "company_registration/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block title %}Choose a plan{% endblock %}
+{% block title_text %}Choose a plan{% endblock %}
+
+{% block content %}
+
+<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<hr>
+
+<form action="" method="post">{% csrf_token %}
+    {{ wizard.management_form }}
+    {{ wizard.form | crispy }}
+
+    <div class="plan-description">
+        <div id="plan-monthly-description" class="plan-description-section">
+            <p>Subscribe to assessment center service monthly and use it whenever you have the busiest assessment period.</p>
+        </div>
+        <div id="plan-yearly-description" class="plan-description-section">
+            <p>Subscribe for a yearly subscription in order to have the assessment center app always at disposal.</p>
+        </div>
+        <div id="plan-trial-description" class="plan-description-section">
+            <p>Try out the assessment center for a limited period. Includes all functionality.</p>
+        </div>
+    </div>
+
+    <!--{% if wizard.steps.prev %}
+    <button name="wizard_goto_step" type="submit" class="btn btn-default" value="{{ wizard.steps.prev }}">Prev step</button>
+    {% endif %}-->
+
+    <input type="submit" class="btn btn-primary" value="Next"/>
+</form>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+
+    var plan_selector = $('#id_plan-plan');
+
+    if (plan_selector.find(":selected").val() == "Yearly") {
+        $("#plan-yearly-description").css('display', '');
+        $("#plan-monthly-description").css('display', 'none');
+        $("#plan-trial-description").css('display', 'none');
+    } else if (plan_selector.find(":selected").val() == "Monthly") {
+        $("#plan-yearly-description").css('display', 'none');
+        $("#plan-monthly-description").css('display', '');
+        $("#plan-trial-description").css('display', 'none');
+    } else {
+        $("#plan-yearly-description").css('display', 'none');
+        $("#plan-monthly-description").css('display', 'none');
+        $("#plan-trial-description").css('display', '');
+    };
+
+    plan_selector.change(function() {
+        if (plan_selector.find(":selected").val() == "Yearly") {
+            $("#plan-yearly-description").css('display', '');
+            $("#plan-monthly-description").css('display', 'none');
+            $("#plan-trial-description").css('display', 'none');
+        } else if (plan_selector.find(":selected").val() == "Monthly") {
+            $("#plan-yearly-description").css('display', 'none');
+            $("#plan-monthly-description").css('display', '');
+            $("#plan-trial-description").css('display', 'none'); 
+        } else {
+            $("#plan-yearly-description").css('display', 'none');
+            $("#plan-monthly-description").css('display', 'none');
+            $("#plan-trial-description").css('display', '');
+        };
+    });
+
+});
+</script>
+{% endblock javascript %}

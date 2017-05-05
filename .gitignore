@@ -1,0 +1,9 @@
+venv
+*.pyc
+staticfiles
+.env
+db.sqlite3
+
+media/cv/*.pdf
+media/material/candidate/*.pdf
+media/material/assessor/*.pdf

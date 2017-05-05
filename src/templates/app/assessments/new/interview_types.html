@@ -1,0 +1,100 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="row">
+    <div class="col-md-2">
+        <p class="breadcrumb">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+    </div>
+    <div class="col-md-10">
+        <div class="float-md-right">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a href="{% url 'interviews:new_assessment_step' 'details' %}">Basic info</a></li>
+                <li class="breadcrumb-item active"><a href="{% url 'interviews:new_assessment_step' 'competencies' %}">Competencies</a></li>
+                <li class="breadcrumb-item active">Interview types</li>
+                <li class="breadcrumb-item active"><a class="text-faded">Candidates</a></li>
+                <li class="breadcrumb-item active"><a class="text-faded"><i class="icon ion-checkmark-round"></i></a></li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<h1 class="mx-auto">Interview types</h1>
+
+<hr>
+
+<p>
+    Assessments consist of a number of interviews through which <strong>all</strong> candidates have to go through.<br>
+    You can define these interview types here.<br>
+    <small>Examples: Manager Interview, Technical Interview, Roleplay Exercise</small>
+</p>
+
+<form action="" method="post">
+    {% csrf_token %}
+
+    {{ wizard.management_form|crispy }}
+    {{ wizard.form.management_form|crispy }}
+
+    {% crispy wizard.form helper %}
+    
+</form>
+
+<!-- Modal -->
+<div class="modal show fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                All changes will be lost.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <a class="btn btn-primary" href="{% url 'interviews:dashboard' %}">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+
+    var current_num = 1;
+    var current_div = "#type-" + current_num.toString();
+    var max_num = parseInt('{{wizard.form.max_num}}');
+
+    $("#addAnother").click(function(){
+
+        current_num++;
+        current_div = "#type-" + current_num.toString();
+
+        if ($(current_div).hasClass('hide')){
+            $(current_div).removeClass("hide");
+        } else if (current_num == max_num) {
+            $("#addAnother").addClass("hide");
+        } else {
+            current_num++;
+            $("#addAnother").click();
+        }
+
+        if (current_num == max_num) {
+           $("#addAnother").addClass("hide");
+        }
+    });
+
+});
+</script>
+{% endblock javascript %}

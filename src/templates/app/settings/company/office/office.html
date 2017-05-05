@@ -1,0 +1,155 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:company' %}">{{ company.name }}</a></li>
+    <li class="breadcrumb-item active">{{ office }}</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if changed %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+        
+<h1>{{ office }}</h1>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="btn-group" role="group">
+            <a class="btn btn-secondary" href="{% url 'interviews:edit_office' office.pk %}">
+                <i class="icon ion-edit"></i>
+                Edit office details
+            </a>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-4">
+        <h4>Rooms</h4>
+        <p>Here you can define office's rooms. These rooms can later be assigned to interviews in which the interviews will take place.</p>
+    </div>
+
+    <div class="col-md-8">
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th colspan="4">
+                        Rooms
+                        <div class="float-md-right">
+                            <a href="#" class="btn btn-secondary">
+                                Import
+                            </a>
+                            <a href="{% url 'interviews:new_room' office.pk %}" class="btn btn-success">
+                                <i class="icon ion-plus"></i>
+                                New
+                            </a>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="bg-faded">
+                    <th>Name</th>
+                    <th>Size</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in office.rooms.all %}
+                    <tr>
+                        <td>{{ room.name }}</td>
+                        <td>{{ room.size }}</td>
+                        <td>
+                            <form method="post" action="#">
+                                {% csrf_token %}
+                                <a class="btn btn-secondary btn-sm" href="{% url 'interviews:edit_room' office.pk room.pk %}">
+                                    <i class="icon ion-edit"></i>
+                                </a>
+                                <button type="submit" class="btn btn-secondary btn-sm text-danger">
+                                    <i class="icon ion-close"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    </div>
+
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-4">
+        <h4>Employees</h4>
+        <p>Here you can define employees of a certain office, as well as search for them.</p>
+    </div>
+
+    <div class="col-md-8">
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th colspan="4">
+                        Employees
+                        <div class="float-md-right">
+                            <a href="#" class="btn btn-secondary">
+                                Import
+                            </a>
+                            <a href="{% url 'interviews:new_employee' office.pk %}" class="btn btn-success">
+                                <i class="icon ion-plus"></i>
+                                New
+                            </a>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="bg-faded">
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in office.employees.all %}
+                    <tr>
+                        <td>{{ employee.full_name }}</td>
+                        <td>
+                            <form method="post" action="#">
+                                {% csrf_token %}
+                                <a class="btn btn-secondary btn-sm" href="{% url 'interviews:edit_employee' office.pk employee.pk %}">
+                                    <i class="icon ion-edit"></i>
+                                </a>
+                                <button type="submit" class="btn btn-secondary btn-sm text-danger">
+                                    <i class="icon ion-close"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    </div>
+
+</div>
+
+<hr>
+
+
+{% endblock %}

@@ -1,0 +1,110 @@
+<nav id="scrollspy-nav" class="navbar navbar-toggleable-md navbar-inverse fixed-top">
+
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <a class="navbar-brand" href="/app/">AssessmentSpace</a>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mx-auto">
+      {% with request.resolver_match.url_name as url %}
+      <li class="nav-item">
+        <a class="nav-link active" href="#home">
+        Home
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#about">
+        About
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#solution">
+        Solution
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#contact">
+        Contact
+        </a>
+      </li>
+      {% endwith %}
+    </ul>
+
+    {% if not request.user.is_authenticated %}
+      <a class="btn btn-primary btn-lg main-button" href="/login/">
+        Login
+      </a>
+    {% else %}
+      <a class="btn btn-primary btn-lg main-button" href="{% url 'interviews:dashboard' %}">
+        Dashboard
+      </a>
+    {% endif %}
+
+  </div>
+
+</nav>
+
+<script>
+$.fn.scrollView = function () {
+    return this.each(function () {
+        $('html, body').animate({
+            scrollTop: $(this).offset().top
+        }, 200);
+    });
+}
+
+function checkScroll(){
+    var startY = $('.navbar').height() * 2; //The point where the navbar changes in px
+
+    if($(window).scrollTop() > startY){
+        $('.navbar').addClass("scrolled bg-primary");
+        $('.main-button').removeClass("btn-primary");
+        $('.main-button').addClass("btn-outline-secondary");
+    }else{
+        $('.navbar').removeClass("scrolled bg-primary");
+        $('.main-button').addClass("btn-primary");
+        $('.main-button').removeClass("btn-outline-secondary");
+    }
+}
+
+if($('.navbar').length > 0){
+    $(window).on("scroll load resize", function(){
+        checkScroll();
+    });
+}
+
+$(document).ready(function(){
+
+    // Add scrollspy to <body>
+    $('body').scrollspy({target: "#scrollspy-nav", offset: 200});
+
+    // Add smooth scrolling on all links inside the navbar
+    $("#scrollspy-nav a").on('click', function(event) {
+
+      // Make sure this.hash has a value before overriding default behavior
+      if (this.hash !== "") {
+
+        // Prevent default anchor click behavior
+        event.preventDefault();
+
+        // Store hash
+        var hash = this.hash;
+
+        // Using jQuery's animate() method to add smooth page scroll
+        // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+        $('html, body').animate({
+          scrollTop: $(hash).offset().top - 120
+        }, 400, function(){
+
+        // Add hash (#) to URL when done scrolling (default click behavior)
+          window.location.hash = hash;
+        });
+
+      } // End if
+
+    });
+
+});
+</script>

@@ -1,0 +1,107 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item active">{{ company.name }}</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if changed %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+        
+<h1>{{ company.name }}</h1>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="btn-group" role="group">
+            <a class="btn btn-secondary" href="{% url 'interviews:edit_company' %}">
+                <i class="icon ion-edit"></i>
+                Edit company details
+            </a>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+{% if company.description %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Description</h4>
+        <p>{{ company.description }}</p>
+    </div>
+</div>
+
+<hr>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-4">
+        <h4>Offices</h4>
+        <p>Here you can define your company's offices. These offices are used as either the location of the assessment center, or the location for which the candidates will be employed.</p>
+    </div>
+
+    <div class="col-md-8">
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th colspan="4">
+                        Offices
+                        <div class="float-md-right">
+                            <a href="{% url 'interviews:new_office' %}" class="btn btn-success">
+                                <i class="icon ion-plus"></i>
+                                New
+                            </a>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="bg-faded">
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for office in offices %}
+                    <tr>
+                        <td>{{ office.name }}</td>
+                        <th>{% if office.city %}{{ office.city }},{% endif %} {{ office.country.name }}</th>
+                        <td>
+                            <form method="post" action="#">
+                                {% csrf_token %}
+                                <a class="btn btn-secondary btn-sm" href="{% url 'interviews:office' office.pk%}">
+                                    <i class="icon ion-edit"></i>
+                                </a>
+                                <button type="submit" class="btn btn-secondary btn-sm text-danger">
+                                    <i class="icon ion-close"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    </div>
+
+</div>
+
+<hr>
+
+{% endblock %}

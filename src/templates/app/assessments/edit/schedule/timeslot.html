@@ -1,0 +1,69 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment_day.schedule.assessment.pk %}">{{ assessment_day.schedule.assessment.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:edit_schedule' assessment_day.pk %}">{{ assessment_day.date }}</a></li>
+    {% if new %}
+        <li class="breadcrumb-item active">New timeslot</li>
+    {% else %}
+        <li class="breadcrumb-item active">Edit timeslot</li>
+    {% endif %}
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if saved %}
+<div class="alert alert-success">{{ success_msg }}</div>
+{% endif %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <h1>{{ title }}</h1>
+    <hr>
+    {% crispy form form.helper %}
+    <hr>
+
+    <a href="#" class="btn btn-secondary" data-toggle="modal" data-target="#confirmModal">Cancel</a>
+    <input type="submit" class="btn btn-primary" value="Save"/>
+    
+</form>
+
+<!-- Confirm Modal -->
+<div class="modal show fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                All changes will be lost.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <a class="btn btn-primary" href="{% url 'interviews:edit_schedule' assessment_day.pk %}">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

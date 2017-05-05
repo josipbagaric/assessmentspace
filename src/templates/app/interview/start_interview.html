@@ -1,0 +1,381 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>
+            {% if assessment %}
+                {{ interview.interview_type }}
+            {% else %}
+                {{ interview.name }}
+            {% endif %}
+        </h1>
+    </div>
+    <div class="col-md-6">
+        <div class="float-md-right">
+            <a href="#" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assessModal">Assess candidate</a>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-6">
+
+        <div class="row">
+            <div class="col-md-2 col-xs-6">
+                Candidate:
+            </div>
+            <div class="col-md-10 col-xs-6">
+                {{ interview.candidate }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 col-xs-6">
+                Duration:
+            </div>
+            <div class="col-md-10 col-xs-6">
+                {{ interview.duration }}
+            </div>
+        </div>
+
+        {% if assessment %}
+            <div class="row">
+                <div class="col-md-2 col-xs-6">
+                    Location:
+                </div>
+                <div class="col-md-10 col-xs-6">
+                    {{ interview.room }}
+                </div>
+            </div>
+        {% endif %}
+
+
+        {% if interview.interview_type.description %}
+            <hr>
+            <div class="row">
+                <div class="col-md-2 col-xs-6">
+                    Description:
+                </div>
+                <div class="col-md-10 col-xs-6">
+                    {{ interview.interview_type.description }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if interview.note %}
+            <hr>
+            <div class="row">
+                <div class="col-md-2 col-xs-6">
+                    Note:
+                </div>
+                <div class="col-md-10 col-xs-6">
+                    {{ interview.note }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-6">
+        Time left: <h3 id="timer"></h3>
+    </div>
+
+</div>
+
+<hr>
+
+<div class="card text-center">
+
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills">
+            <li class="nav-item">
+                <a id="instructions_tab" class="nav-link active" href="#">Instructions</a>
+            </li>
+            {% if interview.candidate.cv %}
+            <li class="nav-item">
+                <a id="cv_tab" class="nav-link" href="#">CV</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-block">
+
+        <div class="row vertical-align" style="margin-bottom: 20px;">
+            <div class="col-md-5 col-xs-4">
+                <div class="float-md-right float-xs-left">
+                    <button id="prev" class="btn btn-secondary">Previous</button>
+                </div>
+            </div>
+            <div class="col-md-2 col-xs-4 horizontal-center">
+                <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+            </div>
+            <div class="col-md-5 col-xs-4">
+                <div class="float-md-left float-xs-right">
+                    <button id="next" class="btn btn-secondary">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row horizontal-center">
+            <canvas id="the-canvas" class="pdf-viewer"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<!-- Assess Modal -->
+<div class="modal show fade" id="assessModal" tabindex="-1" role="dialog" aria-labelledby="assessModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" action="{% url 'interviews:assess_interview' interview.pk %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assessModalLabel">Assess {{ interview.candidate }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        
+                    {% for competency in competencies %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ competency.name }}:
+                            </div>
+                            <div class="col-md-6">
+                                <select name="{{ competency.id }}">
+                                    {% for value in competency.choices %}
+                                        <option>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                Note:
+                            </div>
+                            <div class="col-md-6">
+                                <textarea name="{{ competency.id }}-note"></textarea>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" value="Submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+<script src="{% static 'js/pdf.js' %}"></script>
+<script src="{% static 'js/pdf.worker.js' %}"></script>
+<script>
+
+$(document).ready(function() {
+
+    // Set the date we're counting down to
+    var countDownDate = new Date("{{ interview_end }}").getTime();
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+        // Get todays date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now an the count down date
+        var distance = countDownDate - now;
+
+        // Time calculations for days, hours, minutes and seconds
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display the result in the element with id="timer"
+        if (hours > 0) {
+            document.getElementById("timer").innerHTML = hours + ":" + minutes + ":" + seconds;
+        } else {
+            document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s";   
+        }
+
+        // If the count down is finished, write some text 
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("timer").innerHTML = "Interview finished. Please submit results.";
+        }
+
+    }, 1000);
+
+
+    var pdf_viewer = new PDFViewer('{{ interview.interview_type.assessor_material.url }}');
+    document.getElementById('next').addEventListener('click', function(){
+        pdf_viewer.onNextPage();
+    });
+    document.getElementById('prev').addEventListener('click', function(){
+        pdf_viewer.onPrevPage();
+    });
+
+    $("#instructions_tab").click(function(){
+        window.show_instructions_tab(pdf_viewer);
+    });
+    $("#cv_tab").click(function(){
+        window.show_cv_tab(pdf_viewer);
+    });
+});
+
+function show_instructions_tab(pdf_viewer) {
+    if (!$("#instructions_tab").hasClass("active")) {
+        $("#instructions_tab").addClass("active");
+        $("#cv_tab").removeClass("active");
+
+        pdf_viewer.loadPdf('{{ interview.interview_type.assessor_material.url }}');
+    }
+
+}
+function show_cv_tab(pdf_viewer) {
+    if (!$("#cv_tab").hasClass("active")) {
+        $("#cv_tab").addClass("active");
+        $("#instructions_tab").removeClass("active");
+
+        {% if interview.candidate.cv %}
+            pdf_viewer.loadPdf('{{ interview.candidate.cv.url }}');
+        {% endif %}
+    }
+}
+
+class PDFViewer {
+
+    constructor(url) {
+
+        this.url = url;
+
+        this.pdfDoc = null,
+        this.pageNum = 1,
+        this.pageRendering = false,
+        this.pageNumPending = null,
+        this.scale = 1,
+        this.canvas = document.getElementById('the-canvas'),
+        this.ctx = this.canvas.getContext('2d');
+
+        this.loadPdf(url);
+    }
+
+    get area() {
+        return this.calcArea();
+    }
+
+    calcArea() {
+        return this.height * this.width;
+    }
+
+    loadPdf (url) {
+
+        'use strict';
+
+        // The workerSrc property shall be specified.
+        PDFJS.workerSrc = "{% static 'js/pdf.worker.js' %}";
+
+        var object = this;
+
+        /**
+         * Asynchronously downloads PDF.
+         */
+        PDFJS.getDocument(url).then(function(pdf) {
+            object.pdfDoc = pdf;
+            document.getElementById('page_count').textContent = object.pdfDoc.numPages;
+
+            // Initial/first page rendering
+            object.renderPage(object.pageNum);
+        });
+    }
+
+    /**
+     * Get page info from document, resize canvas accordingly, and render page.
+     * @param num Page number.
+     */
+    renderPage(num) {
+
+        this.pageRendering = true;
+
+        var object = this;
+
+        // Using promise to fetch the page
+        this.pdfDoc.getPage(num).then(function(page) {
+
+            var viewport = page.getViewport(object.scale);
+            object.canvas.height = viewport.height;
+            object.canvas.width = viewport.width;
+
+            // Render PDF page into canvas context
+            var renderContext = {
+                canvasContext: object.ctx,
+                viewport: viewport
+            };
+            var renderTask = page.render(renderContext);
+
+            // Wait for rendering to finish
+            renderTask.promise.then(function() {
+
+                object.pageRendering = false;
+
+                if (object.pageNumPending !== null) {
+                    // New page rendering is pending
+                    object.renderPage(object.pageNumPending);
+                    object.pageNumPending = null;
+                }
+            });
+        });
+
+        // Update page counters
+        document.getElementById('page_num').textContent = this.pageNum;
+    }
+
+    /**
+     * If another page rendering in progress, waits until the rendering is
+     * finised. Otherwise, executes rendering immediately.
+     */
+    queueRenderPage(num) {
+        if (this.pageRendering) {
+            this.pageNumPending = num;
+        } else {
+            this.renderPage(num);
+        }
+    }
+
+    /**
+     * Displays previous page.
+     */
+    onPrevPage() {
+        if (this.pageNum <= 1) {
+            return;
+        }
+        this.pageNum--;
+        this.queueRenderPage(this.pageNum);
+    }
+
+    /**
+     * Displays next page.
+     */
+    onNextPage() {
+        if (this.pageNum >= this.pdfDoc.numPages) {
+            return;
+        }
+        this.pageNum++;
+        this.queueRenderPage(this.pageNum);
+    }
+
+}
+
+
+</script>
+{% endblock javascript %}

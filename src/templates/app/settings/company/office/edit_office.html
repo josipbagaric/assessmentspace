@@ -1,0 +1,50 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:company' %}">{{ company.name }}</a></li>
+    {% if new %}
+        <li class="breadcrumb-item active">New office</li>
+    {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'interviews:office' office.pk %}">{{ office }}</a></li>
+        <li class="breadcrumb-item active">Edit</li>
+    {% endif %}
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+{% if next %}
+    <h1>New office</h1>
+    <p>Before proceeding, the company has to have an office associated with it.<br>Please create an office.</p>
+{% elif new %}
+    <h1>New office</h1>
+{% else %}
+    <h1>{{ office }}</h1>
+{% endif %}
+
+<hr>
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% crispy form form.helper %}
+
+    <input type="submit" class="btn btn-primary" value="Save" />
+
+</form>
+
+{% endblock %}

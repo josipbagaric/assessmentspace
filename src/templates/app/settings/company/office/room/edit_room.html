@@ -1,0 +1,43 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:company' %}">{{ company.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:office' office.pk %}">{{ office.name }}</a></li>
+    {% if new %}
+        <li class="breadcrumb-item active">New room</li>
+    {% else %}
+        <li class="breadcrumb-item active">{{ room.name }} - Edit</li>
+    {% endif %}
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+<h1>{{ room }}</h1>
+
+<hr>
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% crispy form form.helper %}
+
+    <input type="submit" class="btn btn-primary" value="Save" />
+
+</form>
+
+{% endblock %}

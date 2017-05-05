@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if sent %}
+<div class="alert alert-success">
+    <div class="container">
+        Thank you for reaching out. We will be in touch with you soon.
+    </div>
+</div>
+{% endif %}
+
+{% if errors %}
+<div class="alert alert-warning">
+    <div class="container-fluid">
+        {{ errors }}
+    </div>
+</div>
+{% endif %}
+
+<div class="cover-photo-wrapper">
+    <div id="home" class="landing-bg background-properties">
+        <div class="cover-photo container-fluid">
+
+            <div class="row vertical-center">
+                <div class="col-md-6">
+                    <div class="ml-md-5">
+                        <h1 class="hidden-sm-down">AssessmentSpace</h1>
+                        <p>Helping companies find the best talent.</p>
+                        <p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more</a></p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 hovering-icon hidden-sm-down"> 
+                    <a id="newCompany" href="/app/company/new/">
+                        <div class="circle bg-primary">
+                            <i class="icon ion-edit"></i>
+                        </div>
+                    </a>
+                    <div class="icon-text horizontal-center">
+                        <h2>Register your company</h2>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <svg id="cover-triangle" width="100%" height="60px" viewBox="0 0 20 10" preserveAspectRatio="none">
+        <polygon fill="white" stroke-width="0" points="20,0 20,10 0,10"></polygon>
+    </svg>
+</div>
+
+
+<div class="tilt-wrapper">
+    <div id="about" class="section-content container-fluid">
+
+        <h1 class="header-title">About</h1>
+        <div class="row">
+            <div class="col-md-6 horizontal-center">
+                <img src="{% static 'img/new_assessment.png' %}" width="300">
+            </div>
+            <div class="col-md-6">
+                <p class="section-content-text">AssessmentSpace allows companies to perform assessment centers with minimum effort and investment. The platform allows for a digitized way of performing individual interviews, as well as full assessment centers.</p>
+            </div>
+        </div>
+    </div>
+
+    <svg id="tilt-triangle" class="triangle" width="100%" height="60px" viewBox="0 0 20 10" preserveAspectRatio="none">
+        <polygon fill="#eee" stroke-width="0" points="0,0 20,10 0,10"></polygon>
+    </svg>
+</div>
+
+<div class="tilt-wrapper">
+    <div id="solution" class="section-content container-fluid" style="background-color: #eee;">
+
+        <h1 class="header-title">How it works</h1>
+        <div class="row">
+            
+            <div class="how col-md-3">
+                <i class="icon ion-edit"></i>
+                <div class="icon-text horizontal-center">
+                    <h2>1. Registration</h2>
+                    <p>Register as a company. Try our free 30 day trial.</p>
+                </div>
+            </div>
+
+            <div class="how col-md-3">
+                <i class="icon ion-easel"></i>
+                <div class="icon-text horizontal-center">
+                    <h2>2. Assessment creation</h2>
+                    <p>Create an assessment schedule, invite candidates and assessors to join the assessment.</p>
+                </div>
+            </div>
+
+            <div class="how col-md-3">
+                <i class="icon ion-university"></i>
+                <div class="icon-text horizontal-center">
+                    <h2>3. Assessment day</h2>
+                    <p>Assessors interview and grade the candidates.</p>
+                </div>
+            </div>
+
+            <div class="how col-md-3">
+                <i class="icon ion-pie-graph"></i>
+                <div class="icon-text horizontal-center">
+                    <h2>4. Results</h2>
+                    <p>Real-time detailed analytics, integration with existing systems through APIs, and more.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <svg id="tilt-triangle" width="100%" height="60px" viewBox="0 0 20 10" preserveAspectRatio="none">
+        <polygon fill="white" stroke-width="0" points="20,0 20,10 0,10"></polygon>
+    </svg>
+</div>
+
+
+<div class="tilt-wrapper">
+    <div id="features" class="section-content container-fluid">
+
+        <h1 class="header-title">Features</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <a id="newCompany" href="/app/company/new/">
+                        <div class="circle bg-primary">
+                            <i class="icon ion-edit"></i>
+                        </div>
+                    </a>
+                    <div class="icon-text horizontal-center">
+                        <h2>Register your company</h2>
+                    </div>
+            </div>
+            <div class="col-md-6">
+                <ul>
+                    <li>Assessment center management</li>
+                    <li>Analytics</li>
+                    <li>Integration with other HR systems</li>
+                    <li>24/7 support</li>
+                </ul>   
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contact" class="container">
+
+    <div class="contact-wrapper">
+
+        <h1 class="header-title">Sign up for a demo<br><small>or ask us a question</small></h1>
+        
+
+        <form method="POST" action="/">
+            {% csrf_token %}
+
+            {% crispy form form.helper %}
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock javascript %}

@@ -1,0 +1,452 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+{% load django_markdown %}
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment.pk %}">{{ assessment.name }}</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if changed %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+<h1>{{ assessment.name }}</h1>
+
+<hr>
+
+<ul class="nav">
+    <li class="nav-item">
+        <a id="assessment_tab" class="nav-link active text-primary" href="#assessment">
+            Assessment
+            <hr>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a id="competencies_tab" class="nav-link " href="#competencies">
+            Competencies
+        </a>
+    </li>
+    <li class="nav-item">
+        <a id="interview_types_tab" class="nav-link " href="#interview_types">
+            Interview types
+        </a>
+    </li>
+    <li class="nav-item">
+        <a id="participants_tab" class="nav-link" href="#participants">
+            Participants
+        </a>
+    </li>
+    <li class="nav-item">
+        <a id="schedule_tab" class="nav-link" href="#schedule">
+            Schedule
+        </a>
+    </li>
+</ul>
+
+<hr>
+
+<div id="assessment">
+
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.name|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.office|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                {{ form.start_date|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                {{ form.end_date|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.description|as_crispy_field }}
+
+                {% markdown_editor "#id_description" %}
+                {% markdown_media %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.public|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</a>
+            </div>
+            <div class="col-md-6">
+                <div class="float-md-right">
+                    <input type="submit" class="btn btn-primary btn-lg" value="Save" />
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<div id="competencies" class="hide">
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Competencies</h4>
+            <p>Competencies rated in the assessment. Competency scores are metrics that show how the candidate fared on the assessment.</p>
+        </div>
+        <div class="col-md-8">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th colspan="4">
+                            Competencies 
+                            <div class="float-md-right">
+                                <a href="{% url 'interviews:new_competency' assessment.pk %}" class="btn btn-success">
+                                    <i class="icon ion-plus"></i>
+                                    New
+                                </a>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="bg-faded">
+                        <th>Name</th>
+                        <th>Points</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for competency in competencies %}
+                        <tr>
+                            <td>
+                                {{ competency.name }}
+                            </td>
+                            <td>
+                                {{ competency.min_points }} - {{ competency.max_points }}
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'interviews:delete_competency' assessment.pk competency.pk %}">
+                                    {% csrf_token %}
+                                    <a class="btn btn-secondary btn-sm" href="{% url 'interviews:edit_competency' assessment.pk competency.pk %}">
+                                        <i class="icon ion-edit"></i>
+                                    </a>
+                                    <button type="submit" class="btn btn-secondary btn-sm text-danger">
+                                        <i class="icon ion-close"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <hr>
+</div>
+
+<div id="interview_types" class="hide">
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Interview Types</h4>
+            <p>Interview types define which interviews will be contained inside one assessment center. It is assumed that every candidate will have to pass each of the interview types defined.</p>
+        </div>
+
+        <div class="col-md-8">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th colspan="4">
+                            Interview Types 
+                            <div class="float-md-right">
+                                <a href="{% url 'interviews:new_interview_type' assessment.pk %}" class="btn btn-success">
+                                    <i class="icon ion-plus"></i>
+                                    New
+                                </a>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="bg-faded">
+                        <th>Name</th>
+                        <th>Competencies</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for interview_type in interview_types %}
+                        <tr>
+                            <td>
+                                {{ interview_type.name }}
+                            </td>
+                            <td>
+                                {% for competency in interview_type.competencies.all %}
+                                    {% if forloop.last %}
+                                        {{ competency.name }}
+                                    {% else %}
+                                        {{ competency.name }}<br>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'interviews:delete_interview_type' assessment.pk interview_type.pk %}">
+                                    {% csrf_token %}
+                                    <a class="btn btn-secondary btn-sm" href="{% url 'interviews:edit_interview_type' assessment.pk interview_type.pk %}">
+                                        <i class="icon ion-edit"></i>
+                                    </a>
+                                    <button type="submit" class="btn btn-secondary btn-sm text-danger">
+                                        <i class="icon ion-close"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+        </div>
+
+    </div>
+    <hr>
+
+</div>
+
+<div id="participants" class="hide">
+
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Candidates</h4>
+            <p>List of candidates that will attend the assessment center.</p>
+        </div>
+
+        <div class="col-md-8">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th colspan="4">
+                            Candidates
+                            <div class="float-md-right">
+                                <a href="{% url 'interviews:new_candidate' assessment.pk %}" class="btn btn-success">
+                                    <i class="icon ion-plus"></i>
+                                    New
+                                </a>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="bg-faded">
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                        <tr>
+                            <td>
+                                {{ candidate.full_name }}
+                            </td>
+                            <td>
+                                {{ candidate.country.name }}
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'interviews:delete_candidate' assessment.pk candidate.pk %}">
+                                    {% csrf_token %}
+                                    <a class="btn btn-secondary btn-sm" href="{% url 'interviews:edit_candidate' assessment.pk candidate.pk %}">
+                                        <i class="icon ion-edit"></i>
+                                    </a>
+                                    <button type="submit" class="btn btn-secondary btn-sm text-danger">
+                                        <i class="icon ion-close"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+        </div>
+
+    </div>
+
+    <hr>
+
+</div>
+
+<div id="schedule" class="hide">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-deck">
+                {% for day in assessment_days %}
+                    <div class="card">
+                        <a href="{% url 'interviews:edit_schedule' day.pk %}" style="text-decoration: none;">
+                            <div class="card-block">
+                                <h4 class="card-title">{{ day.date }}</h4>
+                                <p class="card-text">
+                                    Candidates: {{ day.candidates.all|length }}<br>
+                                    Interviews: {{ day.num_interviews }}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Delete Modal -->
+<div class="modal show fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form method="post" action="{% url 'interviews:delete_assessment' assessment.pk %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Type in the name of the assessment to confirm:</label>
+                        <input id="delete_assessment_name" class="form-control" type="text" name="assessment_name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger" id="delete_button" disabled="true">Yes</a>
+                </div>
+
+            </form>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+
+    var url = window.location.href.split("/");
+    var url_without_parameters = url[url.length-1].replace("#", "");
+    var tab = url_without_parameters.split('?')[0]
+
+    if (tab != "") {
+        window['show_' + tab + '_tab']();
+    }
+
+    $("#assessment_tab").click(window.show_assessment_tab);
+    $("#competencies_tab").click(window.show_competencies_tab);
+    $("#interview_types_tab").click(window.show_interview_types_tab);
+    $("#participants_tab").click(window.show_participants_tab);
+    $("#schedule_tab").click(window.show_schedule_tab);
+
+    $("#delete_assessment_name").on("change keyup paste", function(){
+        if ($(this).val() == '{{ assessment.name }}') {
+            $('#delete_button').prop('disabled',false);
+        } else {
+            $('#delete_button').prop('disabled',true);
+        }
+    })
+
+});
+
+function show_assessment_tab() {
+    $("#assessment").removeClass("hide");
+    $("#assessment_tab").addClass("active text-primary");
+    if ($("#assessment_tab").children('hr').length < 1){
+        $("#assessment_tab").html($("#assessment_tab").html() + "<hr>");
+    }
+
+    $("#competencies_tab, #interview_types_tab, #participants_tab, #schedule_tab").removeClass("active text-primary");
+    $("#competencies_tab, #interview_types_tab, #participants_tab, #schedule_tab").children('hr').remove();
+    $("#competencies, #interview_types, #participants, #schedule").addClass("hide");
+}
+
+function show_competencies_tab() {
+    $("#competencies").removeClass("hide");
+    $("#competencies_tab").addClass("active text-primary");
+    if ($("#competencies_tab").children('hr').length < 1){
+        $("#competencies_tab").html($("#competencies_tab").html() + "<hr>");
+    }
+
+    $("#assessment_tab, #interview_types_tab, #participants_tab, #schedule_tab").removeClass("active text-primary");
+    $("#assessment_tab, #interview_types_tab, #participants_tab, #schedule_tab").children('hr').remove();
+    $("#assessment, #interview_types, #participants, #schedule").addClass("hide");
+}
+
+function show_interview_types_tab() {
+    $("#interview_types").removeClass("hide");
+    $("#interview_types_tab").addClass("active text-primary");
+    if ($("#interview_types_tab").children('hr').length < 1){
+        $("#interview_types_tab").html($("#interview_types_tab").html() + "<hr>");
+    }
+
+    $("#assessment_tab, #competencies_tab, #participants_tab, #schedule_tab").removeClass("active text-primary");
+    $("#assessment_tab, #competencies_tab, #participants_tab, #schedule_tab").children('hr').remove();
+    $("#assessment, #competencies, #participants, #schedule").addClass("hide");
+}
+
+function show_participants_tab() {
+    $("#participants").removeClass("hide");
+    $("#participants_tab").addClass("active text-primary");
+    if ($("#participants_tab").children('hr').length < 1){
+        $("#participants_tab").html($("#participants_tab").html() + "<hr>");
+    }
+
+    $("#assessment_tab, #competencies_tab, #interview_types_tab, #schedule_tab").removeClass("active text-primary");
+    $("#assessment_tab, #competencies_tab, #interview_types_tab, #schedule_tab").children('hr').remove();
+    $("#assessment, #competencies, #interview_types, #schedule").addClass("hide");
+}
+
+function show_schedule_tab() {
+    $("#schedule").removeClass("hide");
+    $("#schedule_tab").addClass("active text-primary");
+    if ($("#schedule_tab").children('hr').length < 1){
+        $("#schedule_tab").html($("#schedule_tab").html() + "<hr>");
+    }
+
+    $("#assessment_tab, #competencies_tab, #interview_types_tab, #participants_tab").removeClass("active text-primary");
+    $("#assessment_tab, #competencies_tab, #interview_types_tab, #participants_tab").children('hr').remove();
+    $("#assessment, #competencies, #interview_types, #participants").addClass("hide");
+}
+</script>
+{% endblock javascript %}
+
+

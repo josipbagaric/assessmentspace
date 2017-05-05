@@ -1,0 +1,123 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="row">
+    <div class="col-md-2">
+        <p class="breadcrumb">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+    </div>
+    <div class="col-md-10">
+        <div class="float-md-right">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a href="{% url 'interviews:new_interview_step' 'details' %}">Basic info</a></li>
+                <li class="breadcrumb-item active"><a href="{% url 'interviews:new_interview_step' 'competencies' %}">Competencies</a></li>
+                <li class="breadcrumb-item active"><a href="{% url 'interviews:new_interview_step' 'candidate' %}">Candidate</a></li>
+                <li class="breadcrumb-item active">Assessors</li>
+                <li class="breadcrumb-item active"><a class="text-faded"><i class="icon ion-checkmark-round"></i></a></li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<h1 class="mx-auto">Assessors</h1>
+
+<form action="" method="post">{% csrf_token %}
+
+    {{ wizard.management_form }}
+
+    {{ wizard.form.management_form }}
+
+    {% for form in wizard.form.forms %}
+
+        <div id="type-{{ forloop.counter }}" class="{% if not forloop.first %}hide{% endif %}">
+
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form.email|as_crispy_field }}
+                </div>
+            </div> 
+
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.first_name|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.last_name|as_crispy_field }}
+                </div>
+            </div>
+
+            <hr>
+
+        </div>
+
+    {% endfor %}
+
+    <div id="addAnother">
+        <button type="button" class="btn btn-success">Add another</button>
+        <hr>
+    </div>
+
+    <!--{% if wizard.steps.prev %}
+    <button name="wizard_goto_step" type="submit" class="btn btn-default" value="{{ wizard.steps.prev }}">Prev step</button>
+    {% endif %}-->
+
+    <a href="#" class="btn btn-default" data-toggle="modal" data-target="#confirmModal">Cancel</a>
+    <input type="submit" class="btn btn-primary" value="Finish"/>
+    
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                All changes will be lost.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <a class="btn btn-primary" href="{% url 'interviews:dashboard' %}">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+
+    var current_num = 1;
+    var current_div = "#type-" + current_num.toString()
+    var max_num = parseInt('{{wizard.form.extra}}')
+
+    $("#addAnother").click(function(){
+
+        current_num++;
+        current_div = "#type-" + current_num.toString()
+
+        $(current_div).removeClass("hide");
+
+        if (current_num == max_num) {
+           $("#addAnother").addClass("hide");
+        }
+    });
+
+});
+</script>
+{% endblock javascript %}

@@ -1,0 +1,46 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment_day.schedule.assessment.pk %}">{{ assessment_day.schedule.assessment.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:edit_schedule' assessment_day.pk %}">{{ assessment_day.date }}</a></li>
+    <li class="breadcrumb-item active">Add candidate</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if saved %}
+<div class="alert alert-success">{{ success_msg }}</div>
+{% endif %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+<h1>{{ title }}</h1>
+
+<hr>
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% crispy form form.helper %}
+
+    <hr>
+    
+    <a class="btn btn-secondary" href="{% url 'interviews:edit_schedule' assessment_day.pk %}">Cancel</a>
+    <input type="submit" class="btn btn-primary" value="Add"/>
+    
+</form>
+
+{% endblock %}

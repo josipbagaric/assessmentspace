@@ -1,0 +1,225 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment.pk %}">{{ assessment.name }}</a></li>
+    <li class="breadcrumb-item active">Results</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>{{ assessment.name }} - Results</h1>
+    </div>
+    <div class="col-md-6">
+        <div class="float-md-right">
+            <div id="exportDropdown" class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" id="exportDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Export
+                </button>
+
+                <div class="dropdown-menu" aria-labelledby="exportDropdownButton">
+                    <a class="dropdown-item disabled" href="#">Excel</a>
+                    <a class="dropdown-item disabled" href="#">CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<ul class="nav justify-content-center">
+    <li class="nav-item">
+        <a id="candidates_tab" class="nav-link active text-primary" href="#candidates">
+            Candidates
+            <hr>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a id="interview_types_tab" class="nav-link " href="#interview_types">
+            Interview types
+        </a>
+    </li>
+</ul>
+
+<hr>
+
+<div id="candidates">
+    <div class="row">
+        <div class="col-md-12">
+            <p class="card-text">List of results per candidate.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="bg-primary text-white">
+                <th>Candidate</th>
+                <th>Date</th>
+                {% for interview_type in interview_types %}
+                <th>
+                    <div class="row">
+                        <div class="col-md-12 horizontal-center">
+                            {{ interview_type.name }}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        {% for competency in interview_type.competencies.all %}
+                            <div class="col-md-{{ interview_type|get_bootstrap_column }}">
+                                <p class="vertical-text">{{ competency.name|abbrev }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </th>
+                {% endfor %}
+                <th>Total score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in assessment.schedule.days.all %}
+                {% for candidate in day.candidates.all %}
+                <tr>
+                    <td>{{ candidate }}</td>
+                    <td>{{ day.date }}</td>
+                    {% for interview_type in interview_types %}
+                        <td>
+                            <div class="row">
+                            {% for result in results %}
+                                {% for competency in interview_type.competencies.all %}
+                                    {% if result.interview.interview_type == interview_type and result.interview.candidate == candidate and result.competency == competency %}
+                                        <div class="col-md-{{ interview_type|get_bootstrap_column }}">
+                                            {{ result.score }}/{{ competency.max_points }}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            </div>
+                        </td>
+                    {% endfor %}
+                    <td>{{ candidate|candidate_final_score:assessment }}</td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<div id="interview_types" class="hide">
+    <div class="row">
+        <div class="col-md-12">
+            <p class="card-text">List of results per interview type.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="bg-primary text-white">
+                <th>Interview Type</th>
+                {% for competency in competencies %}
+                <th>{{ competency.name }}</th>
+                {% endfor %}
+                <th>Total success rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-active">
+                <td><strong>All</strong></td>
+                {% for competency in competencies %}
+                <th><strong>{{ competency|competency_total_score }}</strong></th>
+                {% endfor %}
+                <th><strong>{{ assessment|assessment_total_success }}</strong></th>
+            </tr>
+            {% for interview_type in interview_types %}
+                <tr>
+                    <td>{{ interview_type.name }}</td>
+                    {% for competency in competencies %}
+                        {% if competency in interview_type.competencies.all %}
+                            <td>{{ competency|competency_score_for_interview_type:interview_type }}</td>
+                        {% else %}
+                            <td>-</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ interview_type|interview_type_total_success }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+
+    $(window).click(function(){
+        if ($("#exportDropdown").hasClass("show")) {
+            $("#exportDropdown").removeClass("show");
+        }
+    });
+
+    $("#exportDropdownButton").click(function(event){
+        event.stopPropagation();
+        $("#exportDropdown").toggleClass("show");
+    });
+
+    var url = window.location.href.split("/");
+    var url_without_parameters = url[url.length-1].replace("#", "");
+    var tab = url_without_parameters.split('?')[0]
+
+    if (tab != "") {
+        window['show_' + tab + '_tab']();
+    }
+
+    $("#candidates_tab").click(window.show_candidates_tab);
+    $("#interview_types_tab").click(window.show_interview_types_tab);
+
+});
+
+function show_candidates_tab() {
+    $("#candidates").removeClass("hide");
+    $("#candidates_tab").addClass("active text-primary");
+    if ($("#candidates_tab").children('hr').length < 1){
+        $("#candidates_tab").html($("#candidates_tab").html() + "<hr>");
+    }
+
+    $("#interview_types_tab").removeClass("active text-primary");
+    $("#interview_types_tab").children('hr').remove();
+    $("#interview_types").addClass("hide");
+}
+function show_interview_types_tab() {
+    $("#interview_types").removeClass("hide");
+    $("#interview_types_tab").addClass("active text-primary");
+    if ($("#interview_types_tab").children('hr').length < 1){
+        $("#interview_types_tab").html($("#interview_types_tab").html() + "<hr>");
+    }
+
+    $("#candidates_tab").removeClass("active text-primary");
+    $("#candidates_tab").children('hr').remove();
+    $("#candidates").addClass("hide");
+}
+</script>
+{% endblock javascript %}
+
+

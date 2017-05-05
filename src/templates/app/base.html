@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+   <title>AssessmentSpace</title>
+
+   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/ionicons.css' %}">
+   <link href='https://fonts.googleapis.com/css?family=Didact+Gothic:300,400' rel='stylesheet' type='text/css'>
+   <link href='https://fonts.googleapis.com/css?family=Montserrat:300,400' rel='stylesheet' type='text/css'>
+   <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/interviews.css' %}">
+   
+   <link href="{% static 'css/fullcalendar.css' %}" rel='stylesheet' />
+   <link href="{% static 'css/fullcalendar.print.css' %}" rel='stylesheet' media='print' />
+   
+   <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+
+   <meta charset='utf-8' />
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+   {% include "app/_header.html" %}
+
+   <div class="bg-faded">
+      <div class="container">
+         {% block breadcrumb %}{% endblock %}
+      </div>
+   </div>
+
+   <hr style="margin-top: 0;">
+
+   <div class="container">
+      {% block content %}
+         Not found.
+      {% endblock %}
+   </div>
+
+   <!-- Placed on the end of the document to load faster -->
+   <script src="{% static 'js/tether.min.js' %}"></script>
+   <script src="{% static 'js/bootstrap.min.js' %}"></script>
+   <script src="{% static 'js/moment.min.js' %}"></script> 
+   <script src="{% static 'js/fullcalendar.js' %}"></script>
+   <script>
+      $(document).ready(function() {
+         $('[data-toggle="tooltip"]').tooltip();
+      });
+   </script>
+
+   {% block javascript %}{% endblock %}
+
+</body>
+</html>

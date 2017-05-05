@@ -1,0 +1,120 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment_day.schedule.assessment.pk %}">{{ assessment_day.schedule.assessment.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:edit_assessment' assessment_day.schedule.assessment.pk %}#schedule">Edit</a></li>
+    <li class="breadcrumb-item active">{{ assessment_day.date }}</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if changed %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+
+<h1>Editing schedule for {{ assessment_day.schedule.assessment.name }}</h1>
+
+<hr>
+
+<h4>{{ assessment_day.date }}</h4>
+
+<hr> 
+
+<table class="table table-bordered table-responsive">
+    <thead>
+        <tr class="bg-primary text-white">
+            <th>Timeslot</th>
+            {% for candidate in assessment_day.candidates.all %}
+            <th>
+                <form method="post" action="{% url 'interviews:schedule_remove_candidate' assessment_day.pk candidate.pk %}">
+                    {% csrf_token %}
+                    {{ candidate.user.username }}
+                    <div class="float-md-right">
+                        <button type="submit" class="btn btn-sm btn-secondary">
+                            <i class="icon ion-close text-danger"></i>
+                        </button>
+                    </div>
+                </form>
+            </th>
+            {% endfor %}
+            <th>
+                <a class="btn btn-secondary btn-sm btn-block" href="{% url 'interviews:schedule_add_candidate' assessment_day.pk %}">
+                    <i class="icon ion-plus text-success"></i>
+                    Candidate
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for timeslot in assessment_day.timeslots.all %}
+        <tr>
+            <th scope="row" class="bg-faded">
+                <form method="post" action="{% url 'interviews:schedule_remove_timeslot' timeslot.pk %}">
+                    {% csrf_token %}
+                    <a href="{% url 'interviews:edit_timeslot' timeslot.pk %}">
+                        {{ timeslot.start_time|time:"H:i" }} - {{ timeslot.end_time|time:"H:i" }}
+                    </a>
+                    <div class="float-md-right">
+                        <button type="submit" class="btn btn-sm btn-secondary">
+                            <i class="icon ion-close text-danger"></i>
+                        </button>
+                    </div>
+                </form>
+            </th>
+            {% for candidate in assessment_day.candidates.all %}
+            <td class="interview-entry">
+                {% for interview in interviews %}
+                    {% if interview.timeslot == timeslot and interview.candidate == candidate %}
+                        <a href="{% url 'interviews:schedule_edit_interview' interview.pk %}">
+                            {{ interview.interview_type }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                <a class="hide btn btn-secondary btn-sm btn-block" href="{% url 'interviews:schedule_add_interview' candidate.pk timeslot.pk %}">
+                    <i class="icon ion-plus text-success"></i>
+                    New interview
+                </a>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>
+                <a class="btn btn-secondary btn-sm btn-block" href="{% url 'interviews:schedule_add_timeslot' assessment_day.pk %}">
+                    <i class="icon ion-plus text-success"></i>
+                    Timeslot
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    $('.interview-entry').each(function(i, obj) {
+        var children = $(this).children();
+
+        if(children.length < 2) {     
+            children.removeClass('hide');
+        }
+    });
+});
+</script>
+{% endblock javascript %}
+
+
+

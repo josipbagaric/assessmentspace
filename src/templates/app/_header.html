@@ -1,0 +1,89 @@
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+  <div class="container">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="{% url 'interviews:dashboard' %}">AssessmentSpace</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav hidden-md-up">
+        {% include "app/_header_links.html" %}
+      </ul>
+    </div>
+
+    {% if company.on_trial %}
+    <div class="trial-indicator hidden-sm-down">
+      <div class="row">
+        <small>Trial</small>
+      </div>
+      <div class="row">
+        <small><a href="/app/upgrade">Upgrade now!</a></small>
+      </div>
+    </div>
+    {% endif %}
+
+    <div id="profileDropdown" class="dropdown hidden-sm-down">
+      <button class="btn btn-secondary dropdown-toggle" id="profileDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {% if request.user.first_name and request.user.last_name %}
+          {{ request.user.first_name }} {{ request.user.last_name }}
+        {% else %}
+          {{ request.user.username }}
+        {% endif %}
+      </button>
+
+      <div class="dropdown-menu" aria-labelledby="profileDropdownButton">
+        <a class="dropdown-item" href="{% url 'interviews:profile' %}">
+          Profile
+        </a>
+        <a class="dropdown-item" href="{% url 'interviews:company' %}">
+          Company
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'interviews:settings' %}">
+          <i class="icon ion-gear-a"></i>
+          Settings
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'logout' %}">
+          <i class="icon ion-log-out"></i>
+          Log out
+        </a>
+      </div>
+    </div>
+    
+  </div>
+</nav>
+
+<script>
+$.fn.scrollView = function () {
+    return this.each(function () {
+        $('html, body').animate({
+            scrollTop: $(this).offset().top
+        }, 200);
+    });
+}
+
+$(document).ready(function(){
+
+  $("#navbarToggler").click(function(){
+      $("#navbarResponsive").scrollView();
+  });
+
+  $("#navbarResponsive a").on('click', function(event) {
+    $('#navbarToggler').click();
+  });
+
+  $(window).click(function(){
+    if ($("#profileDropdown").hasClass("show")) {
+      $("#profileDropdown").removeClass("show");
+    }
+  });
+
+  $("#profileDropdownButton").click(function(event){
+    event.stopPropagation();
+    $("#profileDropdown").toggleClass("show");
+  });
+
+});
+
+
+</script>

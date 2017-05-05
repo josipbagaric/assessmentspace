@@ -1,0 +1,76 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:interview' interview.pk %}">{{ interview.name }}</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if saved %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+<h1>{{ interview.name }}</h1>
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ interview_form|crispy }}
+    <hr>
+    {% for competency_form in competencies_formset %}
+        {{ competency_form|crispy }}
+    {% endfor %}
+    <hr>
+    {{ candidate_form|crispy }}
+    <hr>
+    {% for assessor_form in assessor_formset %}
+        {{ assessor_form|crispy }}
+    {% endfor %}
+
+    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</a>
+    <input type="submit" class="btn btn-primary btn-lg" value="Save" />
+
+</form>
+
+
+<!-- Delete Modal -->
+<div class="modal show fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+        <form method="post" action="{% url 'interviews:delete_interview' interview.pk %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            All information will be lost.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-danger">Yes</button>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

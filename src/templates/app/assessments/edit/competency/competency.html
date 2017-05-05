@@ -1,0 +1,63 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessments' %}">Assessments</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:assessment' assessment.pk %}">{{ assessment.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'interviews:edit_assessment' assessment.pk %}#competencies">Edit</a></li>
+    <li class="breadcrumb-item active">Competency</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if saved %}
+<div class="alert alert-success">Changes saved successfully.</div>
+{% endif %}
+
+{% if errors %}
+<div class="alert alert-warning">{{ errors }}</div>
+{% endif %}
+
+<h1>{{ competency.name }}</h1>
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.name|as_crispy_field }}
+        </div>
+        <div class="col-md-3">
+            {{ form.min_points|as_crispy_field }}
+        </div>
+         <div class="col-md-3">
+            {{ form.max_points|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {{ form.description | as_crispy_field }}
+        </div>
+    </div>
+
+    <hr>
+
+    <input type="submit" class="btn btn-primary" value="Save" />
+
+</form>
+
+
+{% endblock %}

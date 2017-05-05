@@ -1,0 +1,32 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="row">
+    <div class="col-md-2">
+        <p class="breadcrumb text-success">Complete</p>
+    </div>
+    <div class="col-md-10">
+        <div class="float-md-right">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a class="text-primary">Basic info</a></li>
+                <li class="breadcrumb-item active"><a class="text-primary">Competencies</a></li>
+                <li class="breadcrumb-item active"><a class="text-primary">Interview types</a></li>
+                <li class="breadcrumb-item active"><a class="text-primary">Candidates</a></li>
+                <li class="breadcrumb-item active"><a class="text-success"><i class="icon ion-checkmark-round"></i></a></li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="horizontal-center">
+    <h4>Successfully created an assessment.</h4>
+    <a href="{% url 'interviews:dashboard' %}" class="btn btn-primary btn-lg">Back to Dashboard</a>
+</div>
+{% endblock %}

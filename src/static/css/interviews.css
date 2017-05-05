@@ -1,0 +1,239 @@
+html, body 
+{ 
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    font-family:"Didact Gothic";
+}
+
+body { 
+    height: 100%; 
+    display: table;
+    width: 100%; 
+    position: relative;
+}
+
+h1, h2, h3, h4 {
+    font-family:"Montserrat"
+}
+
+strong {font-weight:bold;}
+
+.navbar {
+    padding: 0.6rem;
+    background: rgba(255,255,255,1);
+    border-bottom: 2px solid #0099cc;
+    -webkit-box-shadow:0px 1px 1px #c3c4c7;
+    -moz-box-shadow:0px 1px 1px #c3c4c7;
+    box-shadow:0px 1px 1px #c3c4c7;
+}
+    .navbar-brand {
+        font-size: 28px;
+    }
+    .nav-link {
+        padding: 0px 20px;
+    }
+    .nav-item a {
+        font-size: 20px;
+    }
+    .navbar .container button:focus, button:active {
+        outline-color: #0099cc;
+    }
+
+.navbar-toggler {
+    border: none;
+    outline-color: blue;
+}
+
+.shading {
+    padding: 20px 0px;
+    background-color: rgba(0, 0, 0, 0.51);
+}
+
+
+.intro {
+    padding: 300px 0px;
+    text-align: center;
+    color: #fff;
+    font-size: 36px;
+}
+
+.vertical-center {
+    display: flex;
+    align-items: center;
+}
+
+.collapsible-navbar {
+    margin: 0 auto !important;
+}
+    .collapsible-navbar li {
+        padding: 20px 30px;
+    }
+    .collapsible-navbar li a {
+        color: #d2dde9;
+    }
+    .collapsible-navbar .active {
+        color: blue;
+    }
+
+.horizontal-center {
+    text-align: center;
+}
+
+#calendar {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hide {
+    display: none;
+}
+
+.horizontal-align-center {
+    text-align: center;
+}
+.pdf-viewer {
+    border: 1px solid lightgrey;
+    width: 100%;
+}
+
+
+.card-header-tabs {
+    margin-bottom: 0rem !important;
+}
+
+.main-content {
+    padding: 30px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 69px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-right: 1px solid #eee;
+    padding: 0px;
+}
+    .sidebar .nav-item {
+        padding: 10px 0px;
+    }
+    .sidebar .nav-link {
+        padding: 10px;
+        border-radius: 0;
+    }
+
+.schedule-wrapper-assessment {
+    padding: 20px 0px;
+}
+
+.interview-entry a {
+    text-align: center;
+    text-decoration: none;
+}
+
+.vertical-text {
+    writing-mode:tb-rl;
+}
+
+.table hr {
+    margin-top: 0rem;
+    margin-bottom: 0.3rem;
+}
+
+.asteriskField {
+    color: red;
+}
+
+.markItUp, textarea.markItUpEditor {
+    width: 100% !important;
+}
+
+.breadcrumb {
+    padding: 20px 0px;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 20px;
+    background-color: transparent;
+}
+    .breadcrumb-item a {
+        text-decoration: none;
+    }
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+        color: #bbb;
+    }
+    .circle {
+        width: 33px;
+        height: 33px;
+        border-radius: 50%;
+        color: #fff;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+.nav .nav-item a{
+    color: #aaa;
+}
+    .nav-item hr {
+        border-color: #0099cc; 
+        margin-bottom: 0;
+    }
+    .nav + hr {
+        margin-top: 0;
+    }
+
+.text-faded {
+    color: #bbb !important;
+}
+
+.list-group-item .row {
+    width: 100%;
+}
+
+.start-here-indicator {
+    font-size: 20px;
+    margin-left: 10px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+.pulsate {
+    -webkit-animation: pulsate 2s ease-out;
+    -webkit-animation-iteration-count: infinite; 
+
+    transform: scale(1.1,1.1);
+}
+    @-webkit-keyframes pulsate {
+        0% { 
+            transform: scale(1.1,1.1);
+        }
+        50% { 
+            transform: scale(1,1);
+        }
+        100% { 
+            transform: scale(1.1,1.1);
+        }
+    }
+
+.support-chooser a {
+     text-decoration: none;
+     color: black;
+}
+    .support-chooser a:hover {
+         text-decoration: none;
+         color: #555;
+    }
+    .support-chooser i {
+         color: blue;
+    }
+
+.trial-indicator {
+    width: 150px;
+}

@@ -1,0 +1,14 @@
+{% extends "company_registration/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block title %}Successfully created a company{% endblock %}
+{% block title_text %}Successfully created a company{% endblock %}
+
+{% block content %}
+<p>Log in to the dashboard to start using Interview One.</p>
+<a href="http://{{ company.domain_url }}:8000/login/" class="btn btn-primary btn-block btn-lg">Login at {{ company.domain_url }}</a>
+{% endblock %}

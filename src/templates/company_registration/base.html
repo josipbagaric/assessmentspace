@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+   <!-- BOOTSTRAP -->
+   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+
+   <link rel="stylesheet" type="text/css" href="{% static 'css/ionicons.css' %}">
+   <meta name="google-site-verification" content="2XAwfNfN5IXp53Rs6JNAz8MIpnlPtDp_l9h1i0QDmk4" />
+
+   <link href='https://fonts.googleapis.com/css?family=Didact+Gothic:300,400' rel='stylesheet' type='text/css'>
+   <link href='https://fonts.googleapis.com/css?family=Montserrat:300,400' rel='stylesheet' type='text/css'>
+   
+   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+   <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+   
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+   <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+
+   <title>Interview One</title>
+
+</head>
+
+<body id="registration-modal">
+
+   <div class="container-fluid fill">
+      <div class="row mt-5 modal-container">
+         <div class="col-md-5 mx-auto modal-window">
+
+            <div class="modal-title-text">
+               {% block title_text %}{% endblock %}
+            </div>
+
+            {% block content %}
+               <div>Not found.</div>
+            {% endblock %}
+         </div>
+      </div>
+   </div>
+
+   <!-- Placed on the end of the document to load faster -->
+   <script src="{% static 'js/tether.min.js' %}"></script>
+   <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+   {% block javascript %}{% endblock %}
+</body>
+</html>

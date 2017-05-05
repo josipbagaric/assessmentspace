@@ -1,0 +1,67 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">
+        <div class="circle bg-primary float-md-left">
+            <i class="icon ion-help"></i>
+        </div>
+        <span>&nbsp;&nbsp;Support</span>
+    </li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12 horizontal-center">
+        <h1>Choose an option</h1>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-deck">
+
+            <div class="card support-chooser">
+                <a href="/support/faq/">
+                    <div class="card-block">
+                        <h1 class='horizontal-center'><i class="icon ion-help"></i></h1>
+                        <h4 class="card-title horizontal-center">FAQ</h4>
+                        <p class="card-text">Frequently asked questions.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card support-chooser">
+                <a href="/support/chat/">
+                    <div class="card-block">
+                        <h1 class='horizontal-center'><i class="icon ion-chatbox"></i></h1>
+                        <h4 class="card-title horizontal-center">Chat</h4>
+                        <p class="card-text">Chat with our agents who will help you resolve the problem.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card support-chooser">
+                <a href="/support/call/">
+                    <div class="card-block">
+                        <h1 class='horizontal-center'><i class="icon ion-android-call"></i></h1>
+                        <h4 class="card-title horizontal-center">Phone</h4>
+                        <p class="card-text">Call us directly and we will help you resolve your problem as soon as one of our agents is available.</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block javascript %}
+{% endblock javascript %}

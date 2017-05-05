@@ -1,0 +1,56 @@
+{% extends "app/base.html" %}
+{% load django_markdown %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'interviews:dashboard' %}">
+            <div class="circle bg-primary float-md-left">
+                <i class="icon ion-speedometer"></i>
+            </div>
+            <span>&nbsp;&nbsp;Dashboard</span>
+        </a>
+    </li>
+    <li class="breadcrumb-item active">Assessments</li>
+</ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if deleted %}
+<div class="alert alert-success">Successfully deleted the assessment.</div>
+{% endif %}
+
+<div class="row vertical-align">
+    <div class="col-md-6">
+        <h1>Assessments</h1>
+    </div>
+    <div class="col-md-6">
+        <div class="float-md-right">
+            <a href="{% url 'interviews:new_assessment' %}" class="btn btn-primary btn-lg">
+                <i class="icon ion-plus"></i>
+                New
+            </a>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div>
+    <div class="list-group">
+        {% for assessment in assessments %}
+        <a href="{% url 'interviews:assessment' assessment.pk %}" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ assessment.name }}</h5>
+                <small>{{ assessment.start_date }} - {{ assessment.end_date }}, {{ assessment.office }}</small>
+            </div>
+            <p class="mb-1">{{ assessment.description }}</p>
+        </a>
+        {% empty %}
+        No assessments created yet.
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

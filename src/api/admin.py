@@ -1,0 +1,20 @@
+from django.contrib import admin
+from api import models
+
+admin.site.register(models.Office)
+admin.site.register(models.Room)
+admin.site.register(models.Employee)
+admin.site.register(models.Candidate)
+admin.site.register(models.Competency)
+admin.site.register(models.Interview)
+admin.site.register(models.Result)
+admin.site.register(models.Assessment)
+admin.site.register(models.RoleAffinity)
+admin.site.register(models.AssessmentInterviewType)
+admin.site.register(models.AssessmentInterview)
+admin.site.register(models.AssessmentInterviewResult)
+admin.site.register(models.ExtraEventType)
+admin.site.register(models.ExtraEvent)
+admin.site.register(models.Schedule)
+admin.site.register(models.AssessmentDay)
+admin.site.register(models.Timeslot)

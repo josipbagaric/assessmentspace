@@ -1,0 +1,19 @@
+{% extends 'registration/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% if request.tenant %} to {{ request.tenant.name }} subdomain{% endif %}{% endblock %}
+{% block title_text %}Login{% if request.tenant %} to {{ request.tenant.name }} subdomain{% endif %}{% endblock %}
+
+{% block formcontent %}
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="button-container text-center">
+        <div class="footer-button">
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+            <input type="submit" class="btn btn-primary" value="Login" />
+        </div>
+        <div><a href="{% url 'password_reset' %}{% if next %}?next={{ next }}{% endif %}">Forgot my password</a></div>
+    </div>
+</form>
+{% endblock %}

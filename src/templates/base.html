@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+   <!-- BOOTSTRAP -->
+   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+
+   <link rel="stylesheet" type="text/css" href="{% static 'css/ionicons.css' %}">
+
+   <link href='https://fonts.googleapis.com/css?family=Didact+Gothic:300,400' rel='stylesheet' type='text/css'>
+   <link href='https://fonts.googleapis.com/css?family=Montserrat:300,400' rel='stylesheet' type='text/css'>
+   
+   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+   <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+   
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+   <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+
+   <title>AssessmentSpace</title>
+   <meta name="Description" content="Assessment center.">
+   <meta name="Keywords" content="assessment, center">
+
+</head>
+
+<body>
+
+   {% include "_header.html" %}
+
+   <div>
+      {% block content %}
+      <div>Not found.</div>
+      {% endblock %}
+   </div>
+
+   {% include "./_footer.html" %}
+
+
+   <!-- Placed on the end of the document to load faster -->
+   <script src="{% static 'js/tether.min.js' %}"></script>
+   <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+   {% block javascript %}{% endblock %}
+
+</body>
+</html>
