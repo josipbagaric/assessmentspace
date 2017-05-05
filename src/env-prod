@@ -1,4 +1,11 @@
+DOMAIN=assessmentspace.com
 DEBUG=True
+ADMIN_ENABLED=True
+DB_ENGINE=tenant_schemas.postgresql_backend
+DB_NAME=assessmentspace
+DB_HOST=localhost
+DB_PORT=5432
+DJANGO_SECRET_KEY=4k4e2zvqxj85xsh8u4hxmzt5o4pp20h99f@&h9a8y
 SECURE_SSL_REDIRECT=True
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True

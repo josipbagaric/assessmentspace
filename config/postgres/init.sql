@@ -1,3 +1,3 @@
-CREATE USER aspace;
-CREATE DATABASE aspace;
-GRANT ALL PRIVILEGES ON DATABASE aspace TO aspace;
+CREATE USER assessmentspace;
+CREATE DATABASE assessmentspace;
+GRANT ALL PRIVILEGES ON DATABASE assessmentspace TO assessmentspace;

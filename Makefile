@@ -7,7 +7,7 @@ help:
 	@echo "deploy-staging - sync local code to staging server"
 	@echo "build-staging - sync local code to staging server, rebuild Docker image and reload on staging server"
 
-STAGING_HOST=
+STAGING_HOST=assessmentspace.com
 SSH_KEY=~/keypair1.pem
 
 build-local:
