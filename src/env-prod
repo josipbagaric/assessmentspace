@@ -1,5 +1,6 @@
 DOMAIN=assessmentspace.com
 DEBUG=True
+DEMO=True
 ADMIN_ENABLED=True
 DB_ENGINE=tenant_schemas.postgresql_backend
 DB_NAME=assessmentspace

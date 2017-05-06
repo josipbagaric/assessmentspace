@@ -229,3 +229,8 @@ ADMINS = [('Josip', 'josbagaric@gmail.com')]
 MANAGERS = [('Josip', 'josbagaric@gmail.com')]
 
 SITE_ID = 1
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

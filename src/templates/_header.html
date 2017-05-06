@@ -33,9 +33,15 @@
     </ul>
 
     {% if not request.user.is_authenticated %}
+      {% if is_demo %}
+      <a class="btn btn-primary btn-lg main-button" href="#contact">
+        Sign up
+      </a>
+      {% else %}
       <a class="btn btn-primary btn-lg main-button" href="/login/">
         Login
       </a>
+      {% endif %}
     {% else %}
       <a class="btn btn-primary btn-lg main-button" href="{% url 'interviews:dashboard' %}">
         Dashboard

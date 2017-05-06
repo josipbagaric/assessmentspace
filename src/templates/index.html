@@ -34,7 +34,11 @@
                 </div>
 
                 <div class="col-md-6 hovering-icon hidden-sm-down"> 
+                    {% if is_demo %}
+                    <a id="newCompany" href="#contact">
+                    {% else %}
                     <a id="newCompany" href="/app/company/new/">
+                    {% endif %}
                         <div class="circle bg-primary">
                             <i class="icon ion-edit"></i>
                         </div>
