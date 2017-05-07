@@ -8,4 +8,4 @@ media/cv/*.pdf
 media/material/candidate/*.pdf
 media/material/assessor/*.pdf
 
-src/app/local_settings.py
+src/app/local_settings*

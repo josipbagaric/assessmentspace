@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ~/tracegenomics
+cd ~/assessmentspace
 . venv/bin/activate
 git pull origin master
 make rebuild-web
