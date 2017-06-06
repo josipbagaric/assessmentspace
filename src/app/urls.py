@@ -27,7 +27,7 @@ from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
 urls = [
-    
+
     # top-level pages
     url('^$', landing.views.index, name='home'),
 
@@ -37,7 +37,7 @@ urls = [
     url(r'^admin/', admin.site.urls) if settings.ADMIN_ENABLED else None,
 
     url(r'^tinymce/', include('tinymce.urls')),
-    url(r'^markdown/', include( 'django_markdown.urls')),
+    url(r'^markdown/', include('django_markdown.urls')),
 
     # user creation and auth
     url('^', include('django.contrib.auth.urls')),
@@ -48,4 +48,5 @@ urls = [
 
 ]
 
-urlpatterns = [ u for u in urls if u != None ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns = [u for u in urls if u != None] + \
+    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
