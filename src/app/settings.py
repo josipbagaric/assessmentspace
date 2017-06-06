@@ -116,7 +116,7 @@ TENANT_MODEL = "clients.Client"
 ANONYMOUS_USER_ID = None
 
 MIDDLEWARE = [
-    'tenant_schemas.middleware.TenantMiddleware',
+    'app.middlewares.CustomTenantMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

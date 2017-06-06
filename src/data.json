@@ -1,0 +1,43 @@
+[
+  {
+    "model": "clients.client",
+    "pk": 2,
+    "fields": {
+      "domain_url": "assessmentspace.com",
+      "schema_name": "public",
+      "name": "Interview One",
+      "description": "desc",
+      "plan": "Yearly",
+      "paid_until": "2017-04-04",
+      "on_trial": false,
+      "created": "2017-03-31T06:03:16.532",
+      "updated": "2017-03-31T06:03:16.532"
+    }
+  },
+  {
+    "model": "clients.client",
+    "pk": 3,
+    "fields": {
+      "domain_url": "google.assessmentspace.com",
+      "schema_name": "google",
+      "name": "Google",
+      "description": "",
+      "plan": "Yearly",
+      "paid_until": "2018-03-31",
+      "on_trial": false,
+      "created": "2017-03-31T06:04:31.063",
+      "updated": "2017-03-31T06:04:31.063"
+    }
+  },
+  {
+    "model": "clients.card",
+    "pk": 1,
+    "fields": {
+      "client": 2,
+      "card_number": "12389721398217",
+      "card_cvv": "789",
+      "card_expiry_month": "February",
+      "card_expiry_year": "2019"
+    }
+  }
+]
