@@ -1,5 +1,5 @@
 #!/bin/sh
-rm -rf ~/assessmentspace
+sudo rm -rf ~/assessmentspace
 git clone git@github.com:Bagaric/assessmentspace.git ~/assessmentspace
 cd ~/assessmentspace
 virtualenv --python=/usr/bin/python3 venv
